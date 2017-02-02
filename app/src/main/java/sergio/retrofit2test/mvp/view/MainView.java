@@ -10,6 +10,7 @@ public interface MainView {
 
     Activity getActivity();
 
+    String getUserSearch();
     void setUsername(String text);
     void setRepos(String text);
     void loadImage(String urlImg);

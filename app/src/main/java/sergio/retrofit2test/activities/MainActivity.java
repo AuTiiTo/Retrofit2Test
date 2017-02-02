@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import sergio.retrofit2test.mvp.view.MainView;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
+    private EditText userSearch;
     private ImageView userAvatar;
     private TextView userName;
     private TextView userRepos;
@@ -36,10 +38,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
         init();
     }
 
+
     /**
      * Se encarga de inicializar las vistas
      */
     private void init() {
+        userSearch = (EditText) findViewById(R.id.user_serch);
         userAvatar = (ImageView) findViewById(R.id.user_avatar);
         userName = (TextView) findViewById(R.id.user_name);
         userRepos =  (TextView) findViewById(R.id.user_repos);
@@ -68,6 +72,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    public String getUserSearch() {
+        if (userSearch.length() > 0) {
+            return userSearch.getText().toString();
+        } else {
+            return null;
+        }
     }
 
     @Override

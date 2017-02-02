@@ -36,9 +36,9 @@ public class Repo {
     @Override
     public String toString() {
         return "Repo: " + name +
-                "\nLanguage: " + language +
-                "\nCreated at: " + created_at +
-                "\nUrl: " + url +
+                "| Language: " + language +
+                "\n Created at: " + created_at +
+                "\n Url: " + url +
                 "\n";
     }
 }

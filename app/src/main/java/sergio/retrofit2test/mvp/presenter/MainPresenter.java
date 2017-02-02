@@ -46,6 +46,10 @@ public class MainPresenter implements MainModel.GitHubDownloadConsumer{
     }
     
     private String getRepoName() {
-        return "autiito";
+        if (view != null) {
+            return view.getUserSearch();
+        } else {
+            return "autiito";
+        }
     }
 }

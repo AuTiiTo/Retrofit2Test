@@ -3,4 +3,6 @@
     <string name="error_title">Error</string>
     <string name="dismiss_label">Ok</string>
     <string name="message_downloading">Downloading data</string>
+    <string name="hint_search">Enter a user to see their repos</string>
+    <string name="search">Search</string>
 </resources>

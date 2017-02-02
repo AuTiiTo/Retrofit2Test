@@ -1,5 +1,7 @@
 package sergio.retrofit2test.mvp.model;
 
+import android.text.SpannableString;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -16,25 +18,32 @@ public class MainModel {
 
     private final GitHubDownloadConsumer consumer;
 
-    public interface GitHubDownloadConsumer{
-        void onDownloadFinished(String username, String repoList, String urlImg);
-        void onFailure(String errorMessage);
-    }
-
     public MainModel(GitHubDownloadConsumer consumer) {
         this.consumer = consumer;
     }
 
-    public void startDownload(String repoName) {
+    public void startDownload(String userSearch) {
         GitHubService service = GitHubService.retrofit.create(GitHubService.class);
-        Call<List<Repo>> call = service.listRepo(repoName);
+        Call<List<Repo>> call = service.listRepo(userSearch);
         call.enqueue(new Callback<List<Repo>>() {
             @Override
             public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
                 List<Repo> repos = response.body();
                 Owner owner = repos.get(0).getOwner();
+                StringBuilder repositories = new StringBuilder();
+                for (Repo repo :
+                        repos) {
+                    repositories.append(repo.getName())
+                                .append('\n')
+                                .append(repo.getLanguage())
+                                .append('\n')
+                                .append(repo.getCreated())
+                                .append('\n')
+                                .append(new SpannableString(repo.getUrl()))
+                                .append('\n');
+                }
 
-                consumer.onDownloadFinished(owner.getLogin(), response.body().toString(), owner.getAvatar());
+                consumer.onDownloadFinished(owner.getLogin(), repositories.toString(), owner.getAvatar());
             }
 
             @Override
@@ -42,5 +51,11 @@ public class MainModel {
                 consumer.onFailure(t.getMessage());
             }
         });
+    }
+
+    public interface GitHubDownloadConsumer {
+        void onDownloadFinished(String username, String repoList, String urlImg);
+
+        void onFailure(String errorMessage);
     }
 }
