@@ -42,8 +42,8 @@ public class MainModel {
                                 .append(new SpannableString(repo.getUrl()))
                                 .append('\n');
                 }
-
-                consumer.onDownloadFinished(owner.getLogin(), repositories.toString(), owner.getAvatar());
+                consumer.onDownloadFinish(owner.getLogin(), repos, owner.getAvatar());
+//                consumer.onDownloadFinished(owner.getLogin(), repositories.toString(), owner.getAvatar());
             }
 
             @Override
@@ -54,8 +54,8 @@ public class MainModel {
     }
 
     public interface GitHubDownloadConsumer {
-        void onDownloadFinished(String username, String repoList, String urlImg);
-
+//        void onDownloadFinished(String username, String repoList, String urlImg);
+        void onDownloadFinish(String username, List<Repo> repoList, String urlImg);
         void onFailure(String errorMessage);
     }
 }

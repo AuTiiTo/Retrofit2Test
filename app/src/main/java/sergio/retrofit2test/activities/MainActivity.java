@@ -3,30 +3,40 @@ package sergio.retrofit2test.activities;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import sergio.retrofit2test.R;
+import sergio.retrofit2test.model.Repo;
 import sergio.retrofit2test.mvp.presenter.MainPresenter;
 import sergio.retrofit2test.mvp.view.MainView;
+import sergio.retrofit2test.mvp.view.RepoAdapter;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
-    private EditText userSearch;
+    private SearchView userSearch;
     private ImageView userAvatar;
     private TextView userName;
-    private TextView userRepos;
-    private Button mainButton;
+    private ListView repoList;
 
     private MainPresenter presenter;
+    private RepoAdapter adapter;
     private ProgressDialog dialog;
 
     @Override
@@ -38,21 +48,29 @@ public class MainActivity extends AppCompatActivity implements MainView {
         init();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.search);
+        userSearch= (SearchView) MenuItemCompat.getActionView(menuItem);
+        userSearch.setOnQueryTextListener(this);
+
+        return true;
+    }
 
     /**
      * Se encarga de inicializar las vistas
      */
     private void init() {
-        userSearch = (EditText) findViewById(R.id.user_serch);
         userAvatar = (ImageView) findViewById(R.id.user_avatar);
         userName = (TextView) findViewById(R.id.user_name);
-        userRepos =  (TextView) findViewById(R.id.user_repos);
-        mainButton = (Button) findViewById(R.id.main_button);
-
-        mainButton.setOnClickListener(new View.OnClickListener() {
+        repoList = (ListView) findViewById(R.id.repo_list);
+        repoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                onButtonPressed();
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Repo repo = adapter.getItem(position);
+                presenter.onItemClicked(repo);
             }
         });
     }
@@ -74,14 +92,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         return this;
     }
 
-    public String getUserSearch() {
-        if (userSearch.length() > 0) {
-            return userSearch.getText().toString();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public void setUsername(String user) {
         if (userName!= null){
@@ -90,9 +100,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void setRepos(String repos) {
-        if (userRepos!= null){
-            userRepos.setText(repos);
+    public void setData(List<Repo> repos) {
+        if (repoList != null) {
+            adapter = new RepoAdapter(repos);
+            repoList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -101,11 +113,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         Picasso.with(this)
                .load(urlImg)
                .into(userAvatar);
-    }
-
-    @Override
-    public void onButtonPressed() {
-        presenter.onButtonPressed();
     }
 
     @Override
@@ -141,5 +148,23 @@ public class MainActivity extends AppCompatActivity implements MainView {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void openBrowser(String urlString) {
+        final Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+        startActivity(urlIntent);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        presenter.onButtonSearchPressed(query);
+        userSearch.clearFocus();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

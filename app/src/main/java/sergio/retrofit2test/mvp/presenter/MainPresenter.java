@@ -1,6 +1,9 @@
 package sergio.retrofit2test.mvp.presenter;
 
+import java.util.List;
+
 import sergio.retrofit2test.R;
+import sergio.retrofit2test.model.Repo;
 import sergio.retrofit2test.mvp.model.MainModel;
 import sergio.retrofit2test.mvp.view.MainView;
 
@@ -20,23 +23,23 @@ public class MainPresenter implements MainModel.GitHubDownloadConsumer{
         this.view = view;
     }
 
-    public void onButtonPressed() {
+    public void onButtonSearchPressed(String userToSearch) {
         if (view != null) {
             view.showLoading(view.getActivity().getString(R.string.message_downloading));
-            model.startDownload(getRepoName());
+            model.startDownload(userToSearch);
         }
     }
 
     @Override
-    public void onDownloadFinished(String username, String repoList, String urlImg){
+    public void onDownloadFinish(String username, List<Repo> repoList, String urlImg) {
         if (view != null) {
             view.setUsername(username);
-            view.setRepos(repoList);
             view.loadImage(urlImg);
             view.dismissLoading();
+            view.setData(repoList);
         }
     }
-    
+
     @Override
     public void onFailure(String errorMessage) {
         if (view != null) {
@@ -44,12 +47,10 @@ public class MainPresenter implements MainModel.GitHubDownloadConsumer{
             view.showDialog(errorMessage);
         }
     }
-    
-    private String getRepoName() {
+
+    public void onItemClicked(Repo repo) {
         if (view != null) {
-            return view.getUserSearch();
-        } else {
-            return "autiito";
+            view.openBrowser(repo.getUrl());
         }
     }
 }
