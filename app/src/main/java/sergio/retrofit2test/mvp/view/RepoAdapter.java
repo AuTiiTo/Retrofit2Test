@@ -49,6 +49,7 @@ public class RepoAdapter extends BaseAdapter {
             holder.url = (TextView) convertView.findViewById(R.id.repo_url);
             holder.language = (TextView) convertView.findViewById(R.id.repo_lang);
             holder.created = (TextView) convertView.findViewById(R.id.repo_date);
+            holder.stars_count = (TextView) convertView.findViewById(R.id.repo_stars_count);
 
             convertView.setTag(holder);
         } else {
@@ -61,6 +62,7 @@ public class RepoAdapter extends BaseAdapter {
             holder.language.setText(repoItem.getLanguage());
             holder.url.setText(repoItem.getUrl());
             holder.created.setText(String.valueOf(repoItem.getCreated()));
+            holder.stars_count.setText(String.valueOf(repoItem.getStars()));
         }
 
         return convertView;
@@ -71,6 +73,7 @@ public class RepoAdapter extends BaseAdapter {
         private TextView url;
         private TextView language;
         private TextView created;
+        private TextView stars_count;
     }
 }
 

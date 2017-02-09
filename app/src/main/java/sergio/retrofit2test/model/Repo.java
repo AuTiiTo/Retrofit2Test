@@ -9,20 +9,25 @@ import java.util.Date;
 public class Repo {
     private Owner owner;
     private String name;
-    private String url;
+    private String svn_url;
     private String language;
     private Date created_at;
+    private int stargazers_count;
 
     public String getName() {
         return name;
     }
 
     public String getUrl() {
-        return url;
+        return svn_url;
     }
 
     public String getLanguage() {
         return language;
+    }
+
+    public int getStars() {
+        return stargazers_count;
     }
 
     public Date getCreated() {
@@ -38,7 +43,7 @@ public class Repo {
         return "Repo: " + name +
                 "| Language: " + language +
                 "\n Created at: " + created_at +
-                "\n Url: " + url +
+                "\n Url: " + svn_url +
                 "\n";
     }
 }
