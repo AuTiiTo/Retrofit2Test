@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sergio.retrofit2test.R;
+import sergio.retrofit2test.common.Helper;
 import sergio.retrofit2test.model.Repo;
 
 /**
@@ -61,7 +62,7 @@ public class RepoAdapter extends BaseAdapter {
             holder.name.setText(repoItem.getName());
             holder.language.setText(repoItem.getLanguage());
             holder.url.setText(repoItem.getUrl());
-            holder.created.setText(String.valueOf(repoItem.getCreated()));
+            holder.created.setText(Helper.parseDate(repoItem.getCreated()));//String.valueOf(repoItem.getCreated()));//
             holder.stars_count.setText(String.valueOf(repoItem.getStars()));
         }
 
