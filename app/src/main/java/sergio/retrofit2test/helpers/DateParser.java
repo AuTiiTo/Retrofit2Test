@@ -1,4 +1,4 @@
-package sergio.retrofit2test.common;
+package sergio.retrofit2test.helpers;
 
 import java.util.Date;
 
@@ -6,7 +6,7 @@ import java.util.Date;
  * @author s.ruiz
  */
 
-public class Helper {
+public class DateParser {
 
     public static String parseDate(Date date) {
         String[] dateElements = date.toString().split(" ");
