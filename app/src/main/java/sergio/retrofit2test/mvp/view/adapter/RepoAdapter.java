@@ -1,4 +1,4 @@
-package sergio.retrofit2test.mvp.view;
+package sergio.retrofit2test.mvp.view.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sergio.retrofit2test.R;
-import sergio.retrofit2test.common.Helper;
+import sergio.retrofit2test.helpers.DateParser;
 import sergio.retrofit2test.model.Repo;
 
 /**
@@ -20,8 +20,8 @@ public class RepoAdapter extends BaseAdapter {
 
     private List<Repo> repoItems;
 
-    public RepoAdapter(List<Repo> repoList) {
-        this.repoItems = repoList;
+    public void setRepoItems(List<Repo> repoItems) {
+        this.repoItems = repoItems;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RepoAdapter extends BaseAdapter {
             holder.name.setText(repoItem.getName());
             holder.language.setText(repoItem.getLanguage());
             holder.url.setText(repoItem.getUrl());
-            holder.created.setText(Helper.parseDate(repoItem.getCreated()));//String.valueOf(repoItem.getCreated()));//
+            holder.created.setText(DateParser.parseDate(repoItem.getCreated()));//String.valueOf(repoItem.getCreated()));//
             holder.stars_count.setText(String.valueOf(repoItem.getStars()));
         }
 

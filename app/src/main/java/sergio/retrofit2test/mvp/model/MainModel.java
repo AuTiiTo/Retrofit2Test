@@ -1,11 +1,15 @@
 package sergio.retrofit2test.mvp.model;
 
+import android.content.Context;
+import android.database.Cursor;
+
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import sergio.retrofit2test.githubapi.GitHubService;
+import sergio.retrofit2test.helpers.DataBaseHelper;
 import sergio.retrofit2test.model.Owner;
 import sergio.retrofit2test.model.Repo;
 
@@ -15,12 +19,13 @@ import sergio.retrofit2test.model.Repo;
 public class MainModel {
 
     private final GitHubDownloadConsumer consumer;
+    private DataBaseHelper dbHelper;
 
     public MainModel(GitHubDownloadConsumer consumer) {
         this.consumer = consumer;
     }
 
-    public void startDownload(String userSearch) {
+    public void startDownload(final String userSearch) {
         GitHubService service = GitHubService.retrofit.create(GitHubService.class);
         Call<List<Repo>> call = service.listRepo(userSearch);
         call.enqueue(new Callback<List<Repo>>() {
@@ -37,6 +42,18 @@ public class MainModel {
                 consumer.onFailure(t.getMessage());
             }
         });
+    }
+
+    public Cursor getSuggerences() {
+        return dbHelper.getSuggestions();
+    }
+
+    public void saveSearchTerm(String searchTerm) {
+        dbHelper.saveSearchTerm(searchTerm);
+    }
+
+    public void initDB(Context applicationContext) {
+        dbHelper = new DataBaseHelper(applicationContext);
     }
 
     public interface GitHubDownloadConsumer {

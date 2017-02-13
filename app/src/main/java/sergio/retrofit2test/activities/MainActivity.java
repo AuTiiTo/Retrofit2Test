@@ -26,9 +26,10 @@ import sergio.retrofit2test.R;
 import sergio.retrofit2test.model.Repo;
 import sergio.retrofit2test.mvp.presenter.MainPresenter;
 import sergio.retrofit2test.mvp.view.MainView;
-import sergio.retrofit2test.mvp.view.RepoAdapter;
+import sergio.retrofit2test.mvp.view.adapter.RepoAdapter;
+import sergio.retrofit2test.mvp.view.adapter.SuggestionsAdapter;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainView, SearchView.OnSuggestionListener {
 
     private SearchView userSearch;
     private ImageView userAvatar;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private MainPresenter presenter;
     private RepoAdapter adapter;
     private ProgressDialog dialog;
+    private SuggestionsAdapter suggestionsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
         setContentView(R.layout.activity_main);
 
         presenter = new MainPresenter();
+
+        adapter = new RepoAdapter();
+
         init();
     }
 
@@ -55,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
         final MenuItem menuItem = menu.findItem(R.id.search);
         userSearch= (SearchView) MenuItemCompat.getActionView(menuItem);
         userSearch.setOnQueryTextListener(this);
+        userSearch.setOnSuggestionListener(this);
+
+        suggestionsAdapter = new SuggestionsAdapter(getApplicationContext(), presenter.getSuggerences());
+        userSearch.setSuggestionsAdapter(suggestionsAdapter);
 
         return true;
     }
@@ -102,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public void setData(List<Repo> repos) {
         if (repoList != null) {
-            adapter = new RepoAdapter(repos);
+            adapter.setRepoItems(repos);
             repoList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
@@ -158,13 +167,36 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        presenter.onButtonSearchPressed(query);
+        presenter.onButtonSearchTermPressed(query);
         userSearch.clearFocus();
+        suggestionsAdapter.changeCursor(presenter.getSuggerences());
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        if (suggestionsAdapter.getCursor().moveToPosition(position)) {
+            String searchTerm = suggestionsAdapter.getCursor().getString(1);
+            presenter.onSuggestionSelected(searchTerm);
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionClick(int position) {
+        if (suggestionsAdapter.getCursor().moveToPosition(position)) {
+            String searchTerm = suggestionsAdapter.getCursor().getString(1);
+            presenter.onSuggestionSelected(searchTerm);
+
+            return true;
+        }
         return false;
     }
 }

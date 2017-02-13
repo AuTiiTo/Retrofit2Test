@@ -1,5 +1,7 @@
 package sergio.retrofit2test.mvp.presenter;
 
+import android.database.Cursor;
+
 import java.util.List;
 
 import sergio.retrofit2test.R;
@@ -10,23 +12,26 @@ import sergio.retrofit2test.mvp.view.MainView;
 /**
  * @author s.ruiz
  */
-public class MainPresenter implements MainModel.GitHubDownloadConsumer{
+public class MainPresenter implements MainModel.GitHubDownloadConsumer {
 
     private MainView view;
     private MainModel model;
-    
+
     public MainPresenter() {
         model = new MainModel(this);
     }
 
     public void setView(MainView view) {
         this.view = view;
+        if (this.view != null) {
+            model.initDB(view.getActivity().getApplicationContext());
+        }
     }
 
-    public void onButtonSearchPressed(String userToSearch) {
+    public void onButtonSearchTermPressed(String userToSearch) {
         if (view != null) {
-            view.showLoading(view.getActivity().getString(R.string.message_downloading));
-            model.startDownload(userToSearch);
+            model.saveSearchTerm(userToSearch);
+            onSuggestionSelected(userToSearch);
         }
     }
 
@@ -52,5 +57,16 @@ public class MainPresenter implements MainModel.GitHubDownloadConsumer{
         if (view != null) {
             view.openBrowser(repo.getUrl());
         }
+    }
+
+    public void onSuggestionSelected(String searchTerm) {
+        if (view != null) {
+            view.showLoading(view.getActivity().getString(R.string.message_downloading));
+            model.startDownload(searchTerm);
+        }
+    }
+
+    public Cursor getSuggerences() {
+        return model.getSuggerences();
     }
 }
